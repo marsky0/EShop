@@ -1,51 +1,61 @@
 from fastapi import HTTPException
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from typing import List
+
+from app.db.database import session_manager_for_class
+
 from app.models.products import ProductOrm
 from app.schemas.products import ProductCreate, ProductUpdate
 
 class ProductService:
-    def __init__(self, db: Session):
-        self.db = db
 
-    def list(self):
-        return self.db.query(ProductOrm).all()
+    @session_manager_for_class
+    async def list(self, session: AsyncSession) -> List[ProductOrm]:
+        result = await session.execute(select(ProductOrm))
+        return result.scalars().all()
 
-    def get_by_id(self, id: int):
-        product = self.db.query(ProductOrm).filter(ProductOrm.id == id).first()
+    @session_manager_for_class
+    async def get_by_id(self, session: AsyncSession, id: int) -> ProductOrm:
+        stmt = select(ProductOrm).where(ProductOrm.id == id)
+        result = await session.execute(stmt)
+        product = result.scalars().first()
         if not product:
             raise HTTPException(status_code=404, detail="Product not found")
         return product
-
-    def create(self, data: ProductCreate):
+    
+    @session_manager_for_class
+    async def create(self, session: AsyncSession, data: ProductCreate) -> ProductOrm:
         new_product = ProductOrm(**data.dict())
-        self.db.add(new_product)
+        session.add(new_product)
         try:
-            self.db.commit()
-            self.db.refresh(new_product)
+            await session.commit()
+            await session.refresh(new_product)
             return new_product
-        except IntegrityError:
-            self.db.rollback()
-            raise HTTPException(status_code=500, detail="Database integrity error")
+        except IntegrityError as e:
+            await session.rollback()
+            raise HTTPException(status_code=500, detail=f"Database integrity error: {str(e.orig)}")
 
-    def update(self, id: int, data: ProductUpdate):
-        product = self.get_by_id(id)
+    @session_manager_for_class
+    async def update(self, session: AsyncSession, id: int, data: ProductUpdate) -> ProductOrm:
+        product = await self.get_by_id.__wrapped__(self, session, id)
         for k, v in data.dict(exclude_unset=True).items():
             setattr(product, k, v)
         try:
-            self.db.commit()
-            self.db.refresh(product)
+            await session.commit()
             return product
-        except IntegrityError:
-            self.db.rollback()
-            raise HTTPException(status_code=500, detail="Database integrity error")
+        except IntegrityError as e:
+            await session.rollback()
+            raise HTTPException(status_code=500, detail=f"Database integrity error: {str(e.orig)}")
 
-    def remove(self, id: int):
-        product = self.get_by_id(id)
-        self.db.delete(product)
+    @session_manager_for_class
+    async def remove(self, session: AsyncSession, id: int) -> ProductOrm:
+        product = await self.get_by_id.__wrapped__(self, session, id)
+        await session.delete(product)
         try:
-            self.db.commit()
+            await session.commit()
             return product
-        except IntegrityError:
-            self.db.rollback()
-            raise HTTPException(status_code=500, detail="Database integrity error")
+        except IntegrityError as e:
+            await session.rollback()
+            raise HTTPException(status_code=500, detail=f"Database integrity error: {str(e.orig)}")

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, ClassVar
 from enum import Enum
 
 from app.utils.datetime import current_timestamp
@@ -26,17 +26,17 @@ class OrderBase(BaseModel):
         from_attributes = True
 
 class OrderCreate(BaseModel):
+    create_timestamp: ClassVar[int] = Field(default_factory=current_timestamp)
+    update_timestamp: ClassVar[int] = Field(default_factory=current_timestamp)
     product_id: Optional[int]
     quantity: int
     status: OrderStatus = OrderStatus.new
-    create_timestamp: int = Field(default_factory=current_timestamp)
-    update_timestamp: int = Field(default_factory=current_timestamp)
 
 class OrderUpdate(BaseModel):
+    update_timestamp: ClassVar[int] = Field(default_factory=current_timestamp)
     product_id: Optional[int] = None
     quantity: Optional[int] = None
     status: Optional[OrderStatus] = None
-    update_timestamp: int = Field(default_factory=current_timestamp)
 
 class OrderOpt(BaseModel):
     id: int

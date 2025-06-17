@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, ClassVar
 
 from app.utils.datetime import current_timestamp
 
@@ -16,6 +16,8 @@ class UserBase(BaseModel):
         from_attributes = True
 
 class UserCreate(BaseModel):
+    create_timestamp: ClassVar[int] = Field(default_factory=current_timestamp)
+    update_timestamp: ClassVar[int] = Field(default_factory=current_timestamp)
     username: str
     email: str
     password: str
@@ -24,11 +26,11 @@ class UserCreate(BaseModel):
     update_timestamp: int = Field(default_factory=current_timestamp)
 
 class UserUpdate(BaseModel):
+    update_timestamp: ClassVar[int] = Field(default_factory=current_timestamp)
     username: Optional[str] = None
     email: Optional[str] = None
     password: Optional[str] = None
     is_admin: Optional[bool] = None
-    update_timestamp: int = Field(default_factory=current_timestamp)
 
 class UserOpt(BaseModel):
     id: int

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, ClassVar
 
 from app.utils.datetime import current_timestamp
 
@@ -13,13 +13,13 @@ class CategoryBase(BaseModel):
         from_attributes = True
 
 class CategoryCreate(BaseModel):
+    create_timestamp: ClassVar[int] = Field(default_factory=current_timestamp)
+    update_timestamp: ClassVar[int] = Field(default_factory=current_timestamp)
     name: str
-    create_timestamp: int = Field(default_factory=current_timestamp)
-    update_timestamp: int = Field(default_factory=current_timestamp)
-
+    
 class CategoryUpdate(BaseModel):
+    update_timestamp: ClassVar[int] = Field(default_factory=current_timestamp)
     name: Optional[str] = None
-    update_timestamp: int = Field(default_factory=current_timestamp)
 
 class CategoryOpt(BaseModel):
     id: int

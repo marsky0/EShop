@@ -1,59 +1,72 @@
 from fastapi import HTTPException
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from typing import List
+
+from app.db.database import session_manager_for_class
+
 from app.models.users import UserOrm
 from app.schemas.users import UserCreate, UserUpdate
 from app.utils.hash import generate_hash
 
 class UserService:
-    def __init__(self, db: Session):
-        self.db = db
 
-    def list(self):
-        return self.db.query(UserOrm).all()
+    @session_manager_for_class
+    async def list(self, session: AsyncSession) -> List[UserOrm]:
+        result = await session.execute(select(UserOrm))
+        return result.scalars().all()
 
-    def get_by_id(self, id: int):
-        user = self.db.query(UserOrm).filter(UserOrm.id == id).first()
+    @session_manager_for_class
+    async def get_by_id(self, session: AsyncSession, id: int) -> UserOrm:
+        stmt = select(UserOrm).where(UserOrm.id == id)
+        result = await session.execute(stmt)
+        user = result.scalars().first()
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         return user
 
-    def create(self, data: UserCreate):
-        check_email = self.db.query(UserOrm).filter_by(email=data.email).first()
+    @session_manager_for_class
+    async def create(self, session: AsyncSession, data: UserCreate) -> UserOrm:
+        stmt = select(UserOrm).where(UserOrm.email==data.email)
+        result = await session.execute(stmt)
+        check_email = result.scalars().first()
         if check_email:
             raise HTTPException(status_code=409, detail="Email already registered")
 
         passw_hash = generate_hash(data.password)
         data.password = passw_hash
         new_user = UserOrm(**data.dict())
-        self.db.add(new_user)
+        session.add(new_user)
         try:
-            self.db.commit()
-            self.db.refresh(new_user)
+            await session.commit()
+            await session.refresh(new_user)
             return new_user
-        except IntegrityError:
-            self.db.rollback()
-            raise HTTPException(status_code=500, detail="Database integrity error")
+        except IntegrityError as e:
+            await session.rollback()
+            raise HTTPException(status_code=500, detail=f"Database integrity error: {str(e.orig)}")
 
-    def update(self, id: int, data: UserUpdate):
-        user = self.get_by_id(id)
+    @session_manager_for_class
+    async def update(self, session: AsyncSession, id: int, data: UserUpdate) -> UserOrm:
+        user = await self.get_by_id.__wrapped__(self, session, id)
+        data.password = generate_hash(data.password) 
         for k, v in data.dict(exclude_unset=True).items():
             setattr(user, k, v)
         try:
-            self.db.commit()
-            self.db.refresh(user)
+            await session.commit()
             return user
-        except IntegrityError:
-            self.db.rollback()
-            raise HTTPException(status_code=500, detail="Database integrity error")
+        except IntegrityError as e:
+            await session.rollback()
+            raise HTTPException(status_code=500, detail=f"Database integrity error: {str(e.orig)}")
 
-    def remove(self, id: int):
-        user = self.get_by_id(id) 
-        self.db.delete(user)
+    @session_manager_for_class
+    async def remove(self, session: AsyncSession, id: int) -> UserOrm:
+        user = await self.get_by_id.__wrapped__(self, session, id)
+        await session.delete(user)
         try:
-            self.db.commit()
+            await session.commit()
             return user
-        except IntegrityError:
-            self.db.rollback()
-            raise HTTPException(status_code=500, detail="Database integrity error")
+        except IntegrityError as e:
+            await session.rollback()
+            raise HTTPException(status_code=500, detail=f"Database integrity error: {str(e.orig)}")
 

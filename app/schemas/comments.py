@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import Optional, ClassVar
 
 from app.utils.datetime import current_timestamp
 
@@ -15,15 +15,15 @@ class CommentBase(BaseModel):
         from_attributes = True
 
 class CommentCreate(BaseModel):
+    create_timestamp: ClassVar[int] = Field(default_factory=current_timestamp)
+    update_timestamp: ClassVar[int] = Field(default_factory=current_timestamp)
     user_id: Optional[int]
     rating: int = 0
     text: str
-    create_timestamp: int = Field(default_factory=current_timestamp)
-    update_timestamp: int = Field(default_factory=current_timestamp)
-
+    
 class CommentUpdate(BaseModel):
+    update_timestamp: ClassVar[int] = Field(default_factory=current_timestamp)
     text: Optional[str] = None
-    update_timestamp: int = Field(default_factory=current_timestamp)
 
 class CommentOpt(BaseModel):
     id: int

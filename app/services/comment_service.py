@@ -1,53 +1,63 @@
-from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
+from typing import List
+
+from app.db.database import session_manager_for_class
+
 from app.models.comments import CommentOrm
 from app.schemas.comments import CommentCreate, CommentUpdate
 
 class CommentService:
-    def __init__(self, db: Session):
-        self.db = db
+    
+    @session_manager_for_class
+    async def list(self, session: AsyncSession) -> List[CommentOrm]:
+        result = await session.execute(select(CommentOrm))
+        return result.scalars().all()
 
-    def list(self):
-        return self.db.query(CommentOrm).all()
-
-    def get_by_id(self, id: int):
-        comment = self.db.query(CommentOrm).filter(CommentOrm.id == id).first()
+    @session_manager_for_class
+    async def get_by_id(self, session: AsyncSession, id: int) -> CommentOrm:
+        stmt = select(CommentOrm).where(CommentOrm.id == id)
+        result = await session.execute(stmt)
+        comment = result.scalars().first()
         if not comment:
             raise HTTPException(status_code=404, detail="Comment not found")
         return comment
-
-    def create(self, data: CommentCreate):
+    
+    @session_manager_for_class
+    async def create(self, session: AsyncSession, data: CommentCreate) -> CommentOrm:
         new_comment = CommentOrm(**data.dict())
-        self.db.add(new_comment)
+        session.add(new_comment)
         try:
-            self.db.commit()
-            self.db.refresh(new_comment)
+            await session.commit()
+            await session.refresh(new_comment)
             return new_comment
-        except IntegrityError:
-            self.db.rollback()
-            raise HTTPException(status_code=500, detail="Database integrity error")
+        except IntegrityError as e:
+            await session.rollback()
+            raise HTTPException(status_code=500, detail=f"Database integrity error: {str(e.orig)}")
 
-    def update(self, id: int, data: CommentUpdate):
-        comment = self.get_by_id(id)
+    @session_manager_for_class
+    async def update(self, session: AsyncSession, id: int, data: CommentUpdate) -> CommentOrm:
+        comment = await self.get_by_id.__wrapped__(self, session, id)
         for k, v in data.dict(exclude_unset=True).items():
             setattr(comment, k, v)
         try:
-            self.db.commit()
-            self.db.refresh(comment)
+            await session.commit()
             return comment
-        except IntegrityError:
-            self.db.rollback()
-            raise HTTPException(status_code=500, detail="Database integrity error")
+        except IntegrityError as e:
+            await session.rollback()
+            raise HTTPException(status_code=500, detail=f"Database integrity error: {str(e.orig)}")
 
-    def remove(self, id: int):
-        comment = self.get_by_id(id)
-        self.db.delete(comment)
+    @session_manager_for_class
+    async def remove(self, session: AsyncSession, id: int) -> CommentOrm:
+        comment = await self.get_by_id.__wrapped__(self, session, id)
+        await session.delete(comment)
         try:
-            self.db.commit()
+            await session.commit()
             return comment
-        except IntegrityError:
-            self.db.rollback()
-            raise HTTPException(status_code=500, detail="Database integrity error")
+        except IntegrityError as e:
+            await session.rollback()
+            raise HTTPException(status_code=500, detail=f"Database integrity error: {str(e.orig)}")
 
 

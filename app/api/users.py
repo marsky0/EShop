@@ -1,33 +1,28 @@
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, HTTPException
 from typing import List
-from app.db.database import get_db
+
 from app.services.user_service import UserService
 from app.schemas.users import UserBase, UserOpt, UserCreate, UserUpdate
 
-router = APIRouter(prefix="/users")
+router = APIRouter(prefix="/api/users")
+service = UserService()
 
 @router.get("/", response_model=List[UserOpt])
-def list_user(db: Session = Depends(get_db)):
-    service = UserService(db)
-    return service.list()
+async def list_user():
+    return await service.list()
 
 @router.get("/{id}", response_model=UserOpt)
-def get_user_by_id(id: int, db: Session = Depends(get_db)):
-    service = UserService(db)
-    return service.get_by_id(id)
+async def get_user_by_id(id: int):
+    return await service.get_by_id(id)
 
 @router.post("/", response_model=UserOpt)
-def create_user(data: UserCreate, db: Session = Depends(get_db)):
-    service = UserService(db)
-    return service.create(data)
+async def create_user(data: UserCreate, ):
+    return await service.create(data)
 
 @router.put("/{id}", response_model=UserOpt)
-def update_user(id: int, data: UserUpdate, db: Session = Depends(get_db)):
-    service = UserService(db)
-    return service.update(id, data)
+async def update_user(id: int, data: UserUpdate, ):
+    return await service.update(id, data)
 
 @router.delete("/{id}", response_model=UserOpt)
-def remove_user(id: int, db: Session = Depends(get_db)):
-    service = UserService(db)
-    return service.remove(id)
+async def remove_user(id: int):
+    return await service.remove(id)
