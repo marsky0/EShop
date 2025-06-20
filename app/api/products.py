@@ -4,14 +4,19 @@ from typing import List
 from app.services.product_service import ProductService
 from app.schemas.products import ProductBase, ProductOpt, ProductCreate, ProductUpdate
 
+from app.database.cache import cache
+from app.core.config import settings
+
 router = APIRouter(prefix="/api/products")
 service = ProductService()
 
 @router.get("/", response_model=List[ProductOpt])
+@cache(expire=settings.cache_expire_http_responce)
 async def list_product():
     return await service.list()
 
 @router.get("/{id}", response_model=ProductOpt)
+@cache(expire=settings.cache_expire_http_responce)
 async def get_product_by_id(id: int):
     return await service.get_by_id(id)
 

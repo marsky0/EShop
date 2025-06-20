@@ -6,13 +6,13 @@ from contextlib import asynccontextmanager
 import asyncio
 
 from app.api import cart_items, categories, comments, orders, products, users 
-from app.db.database import *
-
-#Base.metadata.create_all(engine)
+from app.database.db import init_db
+from app.database.cache import init_redis
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
+    await init_redis()
     yield
 
 app = FastAPI(lifespan=lifespan)
@@ -45,7 +45,6 @@ app.include_router(users.router)
 @app.get("/")
 async def root():
     return {"message": "hello World!"}
-
 
 if __name__ == "__main__":
     import uvicorn

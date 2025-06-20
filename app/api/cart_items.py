@@ -4,18 +4,24 @@ from typing import List
 from app.services.cart_items_service import CartItemService
 from app.schemas.cart_items import CartItemBase, CartItemCreate, CartItemUpdate, CartItemUpdateBatch, CartItemDeleteBatch, CartItemOpt 
 
+from app.database.cache import cache
+from app.core.config import settings
+
 router = APIRouter(prefix="/api/cart_items")
 service = CartItemService()
 
 @router.get("/", response_model=List[CartItemOpt])
+@cache(expire=settings.cache_expire_http_responce)
 async def list_cartitem():
     return await service.list()
 
 @router.get("/{id}", response_model=CartItemOpt)
+@cache(expire=settings.cache_expire_http_responce)
 async def get_cartitem_by_id(id: int):
     return await service.get_by_id(id)
 
 @router.get("/user-id/{user_id}", response_model=List[CartItemOpt])
+@cache(expire=settings.cache_expire_http_responce)
 async def get_cartitem_by_user_id(user_id: int):
     return await service.get_by_user_id(user_id)
 

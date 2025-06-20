@@ -4,14 +4,19 @@ from typing import List
 from app.services.category_service import CategoryService
 from app.schemas.categories import CategoryBase, CategoryOpt, CategoryCreate, CategoryUpdate
 
+from app.database.cache import cache
+from app.core.config import settings
+
 router = APIRouter(prefix="/api/categories")
 service = CategoryService() 
 
 @router.get("/", response_model=List[CategoryOpt])
+@cache(expire=settings.cache_expire_http_responce)
 async def list_category():
     return await service.list()
 
 @router.get("/{id}", response_model=CategoryOpt)
+@cache(expire=settings.cache_expire_http_responce)
 async def get_category_by_id(id: int):
     return await service.get_by_id(id)
 

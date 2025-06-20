@@ -4,14 +4,19 @@ from typing import List
 from app.services.comment_service import CommentService
 from app.schemas.comments import CommentBase, CommentOpt, CommentCreate, CommentUpdate
 
+from app.database.cache import cache
+from app.core.config import settings
+
 router = APIRouter(prefix="/api/comments")
 service = CommentService()
 
 @router.get("/", response_model=List[CommentOpt])
+@cache(expire=settings.cache_expire_http_responce)
 async def list_comment():
     return await service.list()
 
 @router.get("/{id}", response_model=CommentOpt)
+@cache(expire=settings.cache_expire_http_responce)
 async def get_comment_by_id(id: int):
     return await service.get_by_id(id)
 
