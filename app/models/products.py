@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 from typing import Optional
 
@@ -12,8 +12,8 @@ class ProductOrm(Base):
     create_timestamp: Mapped[int] = mapped_column(default=current_timestamp)
     update_timestamp: Mapped[int] = mapped_column(default=current_timestamp, onupdate=current_timestamp)
     category_id: Mapped[Optional[int]] = mapped_column(ForeignKey("categories.id", ondelete="SET NULL"))
-    name: Mapped[str] = mapped_column()
-    description: Mapped[str] = mapped_column()
+    name: Mapped[str] = mapped_column(String(100))
+    description: Mapped[str] = mapped_column(String(2000))
     price: Mapped[float] = mapped_column()
     image: Mapped[Optional[str]] = mapped_column()
 
