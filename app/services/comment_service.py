@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
-from app.db.database import session_manager_for_class
+from app.database.db import session_manager_for_class
 
 from app.models.comments import CommentOrm
 from app.schemas.comments import CommentCreate, CommentUpdate

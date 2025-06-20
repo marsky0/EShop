@@ -2,7 +2,7 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 from typing import Optional
 
-from app.db.database import Base
+from app.database.db import Base
 from app.schemas.orders import *
 from app.utils.datetime import current_timestamp
 
