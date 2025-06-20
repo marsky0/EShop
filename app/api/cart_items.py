@@ -4,7 +4,7 @@ from typing import List
 from app.services.cart_items_service import CartItemService
 from app.schemas.cart_items import CartItemBase, CartItemCreate, CartItemUpdate, CartItemUpdateBatch, CartItemDeleteBatch, CartItemOpt 
 
-from app.database.cache import cache
+from app.utils.cache import cache
 from app.core.config import settings
 
 router = APIRouter(prefix="/api/cart_items")

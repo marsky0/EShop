@@ -4,7 +4,7 @@ from typing import List
 from app.services.category_service import CategoryService
 from app.schemas.categories import CategoryBase, CategoryOpt, CategoryCreate, CategoryUpdate
 
-from app.database.cache import cache
+from app.utils.cache import cache
 from app.core.config import settings
 
 router = APIRouter(prefix="/api/categories")

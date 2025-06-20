@@ -4,7 +4,7 @@ from typing import List
 from app.services.order_service import OrderService
 from app.schemas.orders import OrderBase, OrderOpt, OrderCreate, OrderUpdate
 
-from app.database.cache import cache
+from app.utils.cache import cache
 from app.core.config import settings
 
 router = APIRouter(prefix="/api/orders")

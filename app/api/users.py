@@ -4,7 +4,7 @@ from typing import List
 from app.services.user_service import UserService
 from app.schemas.users import UserBase, UserOpt, UserCreate, UserUpdate
 
-from app.database.cache import cache
+from app.utils.cache import cache
 from app.core.config import settings
 
 router = APIRouter(prefix="/api/users")

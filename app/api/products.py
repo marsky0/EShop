@@ -4,7 +4,7 @@ from typing import List
 from app.services.product_service import ProductService
 from app.schemas.products import ProductBase, ProductOpt, ProductCreate, ProductUpdate
 
-from app.database.cache import cache
+from app.utils.cache import cache
 from app.core.config import settings
 
 router = APIRouter(prefix="/api/products")

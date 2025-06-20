@@ -4,7 +4,7 @@ from typing import List
 from app.services.comment_service import CommentService
 from app.schemas.comments import CommentBase, CommentOpt, CommentCreate, CommentUpdate
 
-from app.database.cache import cache
+from app.utils.cache import cache
 from app.core.config import settings
 
 router = APIRouter(prefix="/api/comments")
