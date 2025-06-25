@@ -18,4 +18,4 @@ class ProductOrm(Base):
     image: Mapped[Optional[str]] = mapped_column()
 
     def __repr__(self):
-        return f"<Product: id={self.id}, name={self.name}>"
+        return f"Product(id={self.id}, name={self.name}, description={self.description}, price={self.price}, image={self.image})"

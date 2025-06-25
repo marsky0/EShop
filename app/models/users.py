@@ -17,4 +17,4 @@ class UserOrm(Base):
     is_admin: Mapped[bool] = mapped_column()
 
     def __repr__(self):
-        return f"<User: id={self.id}, username={self.username}, email={self.email}>"
+        return f"User(id={self.id}, username={self.username}, email={self.email}, is_admin={self.is_admin})"

@@ -14,4 +14,4 @@ class CategoryOrm(Base):
     name: Mapped[str] = mapped_column(String(50))
 
     def __repr__(self):
-        return f"<Category: id={self.id}, name={self.name}>"
+        return f"Category(id={self.id}, name={self.name})"

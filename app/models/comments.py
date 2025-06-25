@@ -15,4 +15,4 @@ class CommentOrm(Base):
     text: Mapped[str] = mapped_column(String(1000))
 
     def __repr__(self):
-        return f"<Comment: id={self.id}, user_id={self.name}, rating={self.rating}, text={self.text}>"
+        return f"Comment(id={self.id}, user_id={self.user_id}, text={self.text})"

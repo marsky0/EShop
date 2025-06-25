@@ -15,5 +15,4 @@ class CartItemOrm(Base):
     quantity: Mapped[int] = mapped_column(default=1)
 
     def __repr__(self):
-        return f"<CartItem: id={self.id}, user_id={self.user_id}, product_id={self.product_id}, quantity={self.quantity}>"
-
+        return f"CartItem(id={self.id}, user_id={self.user_id}, product_id={self.product_id}, quantity={self.quantity})"
