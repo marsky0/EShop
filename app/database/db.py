@@ -7,7 +7,7 @@ from typing import AsyncGenerator
 from app.core.config import settings
 
 #SQLALCHEMY_DATABASE_URL = "sqlite+aiosqlite:///database.db"
-SQLALCHEMY_DATABASE_URL = f"postgresql+asyncpg://{settings.postgres_user}:{settings.postgres_password}@{settings.postgres_host}/{settings.postgres_db}"
+#SQLALCHEMY_DATABASE_URL = f"postgresql+asyncpg://{settings.postgres_user}:{settings.postgres_password}@{settings.postgres_host}/{settings.postgres_db}"
 
 class Base(DeclarativeBase):
     pass
@@ -17,11 +17,13 @@ session_maker: AsyncSession = None
 
 async def init_db():
     global engine, session_maker
-    engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
+    engine = create_async_engine(settings.async_database_url)
     session_maker = async_sessionmaker(bind=engine, autocommit=False, autoflush=False, expire_on_commit=False)
 
+    '''
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    '''
 
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
     async with session_maker() as s:
