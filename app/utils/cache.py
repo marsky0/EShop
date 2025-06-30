@@ -15,7 +15,7 @@ def cache(key: str = "", key_args: bool = True, expire: int = 0):
             if key:
                 unique_key = key
             if key_args:
-                unique_key = f"cache_{unique_key}:{args}:{kwargs}"
+                unique_key = f"cache:{unique_key}:{args}:{kwargs}"
 
             data = await redis_client.get(unique_key)
             if data:
