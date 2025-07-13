@@ -18,8 +18,7 @@ class OrderService:
 
     @session_manager_for_class
     async def get_by_id(self, session: AsyncSession, id: int) -> OrderOrm:
-        stmt = select(OrderOrm).where(OrderOrm.id == id)
-        result = await session.execute(stmt)
+        result = await session.execute(select(OrderOrm).where(OrderOrm.id == id))
         order = result.scalars().first()
         if not order:
             raise HTTPException(status_code=404, detail="Order not found")

@@ -18,8 +18,7 @@ class CartItemService:
 
     @session_manager_for_class
     async def get_by_id(self, session: AsyncSession, id: int) -> CartItemOrm:
-        stmt = select(CartItemOrm).where(CartItemOrm.id == id)
-        result = await session.execute(stmt)
+        result = await session.execute(select(CartItemOrm).where(CartItemOrm.id == id))
         item = result.scalars().first()
         if not item:
             raise HTTPException(status_code=404, detail="CartItem not found")
@@ -27,8 +26,7 @@ class CartItemService:
 
     @session_manager_for_class
     async def get_by_user_id(self, session: AsyncSession, user_id: int) -> List[CartItemOrm]:
-        stmt = select(CartItemOrm).where(CartItemOrm.user_id == user_id)
-        result = await session.execute(stmt)
+        result = await session.execute(select(CartItemOrm).where(CartItemOrm.user_id == user_id))
         items = result.scalars().all()
         return items
 
@@ -71,8 +69,7 @@ class CartItemService:
 
     @session_manager_for_class
     async def update_batch(self, session: AsyncSession, ids: List[int], data: List[CartItemUpdate]) -> List[CartItemOrm]:
-        stmt = select(CartItemOrm).where(CartItemOrm.id.in_(ids))
-        result = await session.execute(stmt)
+        result = await session.execute(select(CartItemOrm).where(CartItemOrm.id.in_(ids)))
         items = result.scalars().all()
         
         items_map = {item.id: item for item in items}
@@ -102,8 +99,7 @@ class CartItemService:
 
     @session_manager_for_class
     async def remove_batch(self, session: AsyncSession, ids: List[int]) -> List[CartItemOrm]:
-        stmt = select(CartItemOrm).where(CartItemOrm.id.in_(ids))
-        result = await session.execute(stmt)
+        result = await session.execute(select(CartItemOrm).where(CartItemOrm.id.in_(ids)))
         items = result.scalars().all()
 
         for item in items:

@@ -19,8 +19,23 @@ class UserService:
 
     @session_manager_for_class
     async def get_by_id(self, session: AsyncSession, id: int) -> UserOrm:
-        stmt = select(UserOrm).where(UserOrm.id == id)
-        result = await session.execute(stmt)
+        result = await session.execute(select(UserOrm).where(UserOrm.id == id))
+        user = result.scalars().first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        return user
+    
+    @session_manager_for_class
+    async def get_by_email(self, session: AsyncSession, email: str) -> UserOrm:
+        result = await session.execute(select(UserOrm).where(UserOrm.email == email))
+        user = result.scalars().first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        return user
+    
+    @session_manager_for_class
+    async def get_by_username(self, session: AsyncSession, username: str) -> UserOrm:
+        result = await session.execute(select(UserOrm).where(UserOrm.username == username))
         user = result.scalars().first()
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
@@ -28,14 +43,12 @@ class UserService:
 
     @session_manager_for_class
     async def create(self, session: AsyncSession, data: UserCreate) -> UserOrm:
-        stmt = select(UserOrm).where(UserOrm.email==data.email)
-        result = await session.execute(stmt)
+        result = await session.execute(select(UserOrm).where(UserOrm.email==data.email))
         check_email = result.scalars().first()
         if check_email:
             raise HTTPException(status_code=409, detail="Email already registered")
 
-        passw_hash = generate_hash(data.password)
-        data.password = passw_hash
+        data.password = generate_hash(data.password)
         new_user = UserOrm(**data.dict())
         session.add(new_user)
         try:

@@ -18,8 +18,7 @@ class CommentService:
 
     @session_manager_for_class
     async def get_by_id(self, session: AsyncSession, id: int) -> CommentOrm:
-        stmt = select(CommentOrm).where(CommentOrm.id == id)
-        result = await session.execute(stmt)
+        result = await session.execute(select(CommentOrm).where(CommentOrm.id == id))
         comment = result.scalars().first()
         if not comment:
             raise HTTPException(status_code=404, detail="Comment not found")

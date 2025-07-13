@@ -18,8 +18,7 @@ class CategoryService:
 
     @session_manager_for_class
     async def get_by_id(self, session: AsyncSession, id: int) -> CategoryOrm:
-        stmt = select(CategoryOrm).where(CategoryOrm.id == id)
-        result = await session.execute(stmt)
+        result = await session.execute(select(CategoryOrm).where(CategoryOrm.id == id))
         category = result.scalars().first()
         if not category:
             raise HTTPException(status_code=404, detail="Category not found")

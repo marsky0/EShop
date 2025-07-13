@@ -18,8 +18,7 @@ class ProductService:
 
     @session_manager_for_class
     async def get_by_id(self, session: AsyncSession, id: int) -> ProductOrm:
-        stmt = select(ProductOrm).where(ProductOrm.id == id)
-        result = await session.execute(stmt)
+        result = await session.execute(select(ProductOrm).where(ProductOrm.id == id))
         product = result.scalars().first()
         if not product:
             raise HTTPException(status_code=404, detail="Product not found")
