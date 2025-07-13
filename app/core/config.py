@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     postgres_db: str
     postgres_user: str
     postgres_password: str
+    redis_url: str
     cache_expire_http_responce: int
 
     class Config:

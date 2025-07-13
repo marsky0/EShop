@@ -2,7 +2,7 @@ from redis.asyncio import Redis
 from functools import wraps
 import pickle
 
-from app.core.redis_client import get_redis_client
+from app.database.redis_client import get_redis_client
 
 def cache(key: str = "", key_args: bool = True, expire: int = 0):
     def decorator(func):

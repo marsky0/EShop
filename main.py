@@ -7,7 +7,7 @@ import asyncio
 
 from app.api import auth, cart_items, categories, comments, orders, products, users
 from app.database.db import init_db
-from app.core.redis_client import init_redis
+from app.database.redis_client import init_redis
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
