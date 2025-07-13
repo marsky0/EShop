@@ -13,8 +13,8 @@ class UserOrm(Base):
     update_timestamp: Mapped[int] = mapped_column(default=current_timestamp, onupdate=current_timestamp)
     username: Mapped[str] = mapped_column(String(50))
     email: Mapped[str] = mapped_column(String(50))
-    password: Mapped[str] = mapped_column(String(50))
-    is_admin: Mapped[bool] = mapped_column()
+    password: Mapped[str] = mapped_column(String(150))
+    is_admin: Mapped[bool] = mapped_column(default=lambda: False)
 
     def __repr__(self):
         return f"User(id={self.id}, username={self.username}, email={self.email}, is_admin={self.is_admin})"
