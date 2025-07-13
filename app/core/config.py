@@ -1,6 +1,10 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
+    secret_key: str
+    jwt_algorithm: str
+    access_token_expires: int
+    refresh_token_expires: int
     postgres_host: str
     postgres_db: str
     postgres_user: str

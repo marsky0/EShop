@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import asyncio
 
-from app.api import cart_items, categories, comments, orders, products, users 
+from app.api import auth, cart_items, categories, comments, orders, products, users
 from app.database.db import init_db
 from app.core.redis_client import init_redis
 
@@ -35,6 +35,7 @@ async def catch_exception_middleware(request: Request, call_next):
 
 app.middleware('http')(catch_exception_middleware)
 
+app.include_router(auth.router)
 app.include_router(cart_items.router)
 app.include_router(categories.router)
 app.include_router(comments.router)

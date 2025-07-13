@@ -5,11 +5,15 @@ from app.models.orders import OrderOrm
 from app.models.products import ProductOrm
 from app.models.users import UserOrm
 
+from app.models.auth import JwtTokenPairOrm
+
 __all__ = [
     'CartItemOrm',
     'CategoryOrm',
     'CommentOrm',
     'OrderOrm',
     'ProductOrm',
-    'UserOrm'
+    'UserOrm',
+
+    'JwtTokenPairOrm',
 ]
