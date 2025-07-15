@@ -11,6 +11,7 @@ class OrderOrm(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     create_timestamp: Mapped[int] = mapped_column(default=current_timestamp)
     update_timestamp: Mapped[int] = mapped_column(default=current_timestamp, onupdate=current_timestamp)
+    user_id: Mapped[Optional[int]] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
     product_id: Mapped[Optional[int]] = mapped_column(ForeignKey("products.id", ondelete="SET NULL"))
     quantity: Mapped[int] = mapped_column()
     status: Mapped[str] = mapped_column(String(50))
