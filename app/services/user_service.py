@@ -62,7 +62,8 @@ class UserService:
     @session_manager_for_class
     async def update(self, session: AsyncSession, id: int, data: UserUpdate) -> UserOrm:
         user = await self.get_by_id.__wrapped__(self, session, id)
-        data.password = generate_hash(data.password) 
+        if data.password:
+            data.password = generate_hash(data.password) 
         for k, v in data.dict(exclude_unset=True).items():
             setattr(user, k, v)
         try:
