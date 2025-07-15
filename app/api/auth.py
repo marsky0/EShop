@@ -16,7 +16,6 @@ async def register(data: RegisterOpt):
 
 @router.get("/confirm/{token}", response_model=JwtTokenPairOpt)
 async def confirm(token: str):
-    print(token)
     return await register_confirm_for_jwt_token_pair(token)
 
 @router.post("/login", response_model=JwtTokenPairOpt)

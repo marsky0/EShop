@@ -230,3 +230,37 @@ async def refresh_jwt_token_pair_by_token(session: AsyncSession, refresh_token: 
     
     new_token_pair = await create_jwt_token_pair(token_data.user_id)
     return new_token_pair
+
+async def authorization_user_by_headers(headers):
+    data = headers.get("Authorization")
+    if not data:
+        raise HTTPException(
+            status_code=401, 
+            detail="Not authenticated", 
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    
+    data = data.split()
+    if not data:
+        raise HTTPException(
+            status_code=401, 
+            detail="Not authenticated", 
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    
+    user = await get_current_user(data[-1])
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="Account not found",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+
+    if not user.is_confirmed:
+        raise HTTPException(
+            status_code=401,
+            detail="Account not verified",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    
+    return user
