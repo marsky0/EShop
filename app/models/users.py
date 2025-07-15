@@ -14,6 +14,7 @@ class UserOrm(Base):
     username: Mapped[str] = mapped_column(String(50))
     email: Mapped[str] = mapped_column(String(50))
     password: Mapped[str] = mapped_column(String(150))
+    is_confirmed: Mapped[bool] = mapped_column(default=lambda: False)
     is_admin: Mapped[bool] = mapped_column(default=lambda: False)
 
     def __repr__(self):

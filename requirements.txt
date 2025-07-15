@@ -12,3 +12,5 @@ pytest==8.4.1
 pytest-asyncio==1.0.0
 httpx==0.28.1
 PyJWT==2.10.1
+celery==5.5.3
+protonmail-api-client==2.4.3

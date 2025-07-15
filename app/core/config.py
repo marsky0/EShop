@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
+    frontend_url: str
     secret_key: str
     jwt_algorithm: str
     access_token_expires: int
@@ -11,6 +12,8 @@ class Settings(BaseSettings):
     postgres_password: str
     redis_url: str
     cache_expire_http_responce: int
+    email_user: str
+    email_password: str
 
     class Config:
         env_file = ".env"

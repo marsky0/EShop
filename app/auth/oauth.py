@@ -11,7 +11,7 @@ import uuid
 from app.database.db import session_manager
 from app.models.users import UserOrm
 from app.models.auth import JwtTokenPairOrm
-from app.schemas.auth import LoginOpt, RegisterOpt, TokenData
+from app.schemas.auth import LoginOpt, RegisterOpt, TokenData, TokenOpt
 from app.core.config import settings
 from app.utils.hash import generate_hash, validate_hash
 from app.utils.datetime import current_timestamp
@@ -58,9 +58,17 @@ async def create_jwt_token_pair(session: AsyncSession, user_id: int) -> JwtToken
 
     return jwt_token_pair
 
+async def create_register_confirm_token(email: str) -> str:
+    expires_timestamp = current_timestamp() + 5*60
+    to_encode = {"type": "confirm", "email": email, "expire": expires_timestamp}
+    token = jwt.encode(to_encode, settings.secret_key, algorithm=settings.jwt_algorithm)
+    return token
+
 async def get_token_data(token: str) -> Optional[TokenData]:
     try:
         data = jwt.decode(token, settings.secret_key, algorithms=[settings.jwt_algorithm])
+        if data["type"] != "access" and data["type"] != "refresh":
+            return None
         return TokenData(**data)
     except InvalidTokenError:
         return None
@@ -101,19 +109,45 @@ async def get_current_user(session: AsyncSession, token: str) -> UserOrm:
     return user
 
 @session_manager
-async def register_for_jwt_token_pair(session: AsyncSession, data: RegisterOpt):
+async def register_for_confirm_token(session: AsyncSession, data: RegisterOpt):
     result = await session.execute(select(UserOrm).where(UserOrm.email==data.email))
     check_email = result.scalars().first()
     if check_email:
         raise HTTPException(status_code=409, detail="Email already registered")
-
+    
     data.password = generate_hash(data.password)
     new_user = UserOrm(**data.dict())
     session.add(new_user)
     try:
         await session.commit()
         await session.refresh(new_user)
-        jwt_token_pair = await create_jwt_token_pair(new_user.id)
+        confirm_token = await create_register_confirm_token(data.email)
+        return confirm_token
+    except IntegrityError as e:
+        await session.rollback()
+        raise HTTPException(status_code=500, detail=f"Database integrity error: {str(e)}")
+
+@session_manager
+async def register_confirm_for_jwt_token_pair(session: AsyncSession, data: TokenOpt):
+    token_data = jwt.decode(data, settings.secret_key, algorithms=[settings.jwt_algorithm])
+    if not token_data or token_data["type"] != "confirm":
+        raise HTTPException(status_code=400, detail="Invalid confirm token.")
+    
+    if token_data["expire"] < current_timestamp():
+        raise token_expired_exception
+    
+    result = await session.execute(select(UserOrm).where(UserOrm.email==token_data["email"]))
+    user = result.scalars().first()
+
+    if not user:
+        raise credentials_exception
+    
+    user.is_confirmed = True
+
+    try:
+        await session.commit()
+        await session.refresh(user)
+        jwt_token_pair = await create_jwt_token_pair(user.id)
         return jwt_token_pair
     except IntegrityError as e:
         await session.rollback()
