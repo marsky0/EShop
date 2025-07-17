@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi_limiter.depends import RateLimiter
 from typing import List
 
 from app.services.user_service import UserService
@@ -16,7 +17,7 @@ forbidden_exception = HTTPException(
     detail="Forbidden: you don't have permission to perform this action", 
 )
 
-@router.get("/", response_model=List[UserOpt])
+@router.get("/", response_model=List[UserOpt], dependencies=[Depends(RateLimiter(times=25, seconds=60))])
 @cache(expire=settings.cache_expire_http_responce)
 async def list_user(request: Request):
     user = await authorization_user_by_headers(request.headers)
@@ -24,7 +25,7 @@ async def list_user(request: Request):
         raise forbidden_exception
     return await service.list()
 
-@router.get("/{id}", response_model=UserOpt)
+@router.get("/{id}", response_model=UserOpt, dependencies=[Depends(RateLimiter(times=25, seconds=60))])
 @cache(expire=settings.cache_expire_http_responce)
 async def get_user_by_id(id: int, request: Request):
     user_by_token = await authorization_user_by_headers(request.headers)
@@ -33,21 +34,21 @@ async def get_user_by_id(id: int, request: Request):
         raise forbidden_exception
     return user
 
-@router.post("/", response_model=UserOpt)
+@router.post("/", response_model=UserOpt, dependencies=[Depends(RateLimiter(times=25, seconds=60))])
 async def create_user(data: UserCreate, request: Request):
     user = await authorization_user_by_headers(request.headers)
     if not user.is_admin:
         raise forbidden_exception
     return await service.create(data)
 
-@router.put("/{id}", response_model=UserOpt)
+@router.put("/{id}", response_model=UserOpt, dependencies=[Depends(RateLimiter(times=25, seconds=60))])
 async def update_user(id: int, data: UserUpdate, request: Request):
     user = await authorization_user_by_headers(request.headers)
     if not user.is_admin:
         raise forbidden_exception
     return await service.update(id, data)
 
-@router.delete("/{id}", response_model=UserOpt)
+@router.delete("/{id}", response_model=UserOpt, dependencies=[Depends(RateLimiter(times=25, seconds=60))])
 async def remove_user(id: int, request: Request):
     user = await authorization_user_by_headers(request.headers)
     if not user.is_admin:

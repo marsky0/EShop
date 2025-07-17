@@ -2,17 +2,19 @@ from fastapi import FastAPI, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_limiter import FastAPILimiter
 from contextlib import asynccontextmanager
 import asyncio
 
 from app.api import auth, cart_items, categories, comments, orders, products, users
 from app.database.db import init_db
-from app.database.redis_client import init_redis
+from app.database.redis_client import init_redis, get_redis_client
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
     await init_redis()
+    await FastAPILimiter.init(get_redis_client())
     yield
 
 app = FastAPI(lifespan=lifespan)
