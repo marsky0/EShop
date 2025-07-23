@@ -26,7 +26,7 @@ class ProductService:
     
     @session_manager_for_class
     async def create(self, session: AsyncSession, data: ProductCreate) -> ProductOrm:
-        new_product = ProductOrm(**data.dict())
+        new_product = ProductOrm(**data.model_dump())
         session.add(new_product)
         try:
             await session.commit()
@@ -39,7 +39,7 @@ class ProductService:
     @session_manager_for_class
     async def update(self, session: AsyncSession, id: int, data: ProductUpdate) -> ProductOrm:
         product = await self.get_by_id.__wrapped__(self, session, id)
-        for k, v in data.dict(exclude_unset=True).items():
+        for k, v in data.model_dump(exclude_unset=True).items():
             setattr(product, k, v)
         try:
             await session.commit()

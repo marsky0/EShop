@@ -49,7 +49,7 @@ class UserService:
             raise HTTPException(status_code=409, detail="Email already registered")
 
         data.password = generate_hash(data.password)
-        new_user = UserOrm(**data.dict())
+        new_user = UserOrm(**data.model_dump())
         session.add(new_user)
         try:
             await session.commit()
@@ -64,7 +64,7 @@ class UserService:
         user = await self.get_by_id.__wrapped__(self, session, id)
         if data.password:
             data.password = generate_hash(data.password) 
-        for k, v in data.dict(exclude_unset=True).items():
+        for k, v in data.model_dump(exclude_unset=True).items():
             setattr(user, k, v)
         try:
             await session.commit()

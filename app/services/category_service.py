@@ -26,7 +26,7 @@ class CategoryService:
 
     @session_manager_for_class
     async def create(self, session: AsyncSession, data: CategoryCreate) -> CategoryOrm:
-        new_category = CategoryOrm(**data.dict())
+        new_category = CategoryOrm(**data.model_dump())
         session.add(new_category)
         try:
             await session.commit()
@@ -39,7 +39,7 @@ class CategoryService:
     @session_manager_for_class
     async def update(self, session: AsyncSession, id: int, data: CategoryUpdate) -> CategoryOrm:
         category = await self.get_by_id.__wrapped__(self, session, id)
-        for k, v in data.dict(exclude_unset=True).items():
+        for k, v in data.model_dump(exclude_unset=True).items():
             setattr(category, k, v)
         try:
             await session.commit()

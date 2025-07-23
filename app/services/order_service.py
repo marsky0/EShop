@@ -26,7 +26,7 @@ class OrderService:
     
     @session_manager_for_class
     async def create(self, session: AsyncSession, data: OrderCreate) -> OrderOrm:
-        new_order = OrderOrm(**data.dict())
+        new_order = OrderOrm(**data.model_dump())
         session.add(new_order)
         try:
             await session.commit()
@@ -39,7 +39,7 @@ class OrderService:
     @session_manager_for_class
     async def update(self, session: AsyncSession, id: int, data: OrderUpdate) -> OrderOrm:
         order = await self.get_by_id.__wrapped__(self, session, id)
-        for k, v in data.dict(exclude_unset=True).items():
+        for k, v in data.model_dump(exclude_unset=True).items():
             setattr(order, k, v)
         try:
             await session.commit()
