@@ -2,6 +2,8 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     frontend_url: str
+    default_ratelimit_num: int
+    default_ratelimit_time: int
     secret_key: str
     jwt_algorithm: str
     access_token_expires: int
