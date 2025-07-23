@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 
 from app.utils.datetime import current_timestamp
 
@@ -19,6 +19,7 @@ class JwtTokenPairBase(BaseModel):
 
 
 class JwtTokenPairOpt(BaseModel):
+    user_id: int
     access_token: str
     refresh_token: str
     access_token_expires_timestamp: int
@@ -44,14 +45,14 @@ class TokenOpt(BaseModel):
 
 class RegisterOpt(BaseModel):
     username: str
-    email: str
+    email: EmailStr
     password: str
 
     class Config:
         from_attributes = True
 
 class LoginOpt(BaseModel):
-    email: str
+    email: EmailStr
     password: str
 
     class Config:

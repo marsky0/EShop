@@ -116,7 +116,7 @@ async def register_for_confirm_token(session: AsyncSession, data: RegisterOpt):
         raise HTTPException(status_code=409, detail="Email already registered")
     
     data.password = generate_hash(data.password)
-    new_user = UserOrm(**data.dict())
+    new_user = UserOrm(**data.model_dump())
     session.add(new_user)
     try:
         await session.commit()
@@ -129,7 +129,11 @@ async def register_for_confirm_token(session: AsyncSession, data: RegisterOpt):
 
 @session_manager
 async def register_confirm_for_jwt_token_pair(session: AsyncSession, data: TokenOpt):
-    token_data = jwt.decode(data, settings.secret_key, algorithms=[settings.jwt_algorithm])
+    try:
+        token_data = jwt.decode(data, settings.secret_key, algorithms=[settings.jwt_algorithm])
+    except jwt.exceptions.DecodeError:
+        token_data = None
+
     if not token_data or token_data["type"] != "confirm":
         raise HTTPException(status_code=400, detail="Invalid confirm token.")
     
@@ -156,6 +160,8 @@ async def register_confirm_for_jwt_token_pair(session: AsyncSession, data: Token
 
 async def login_for_jwt_token_pair(data: LoginOpt) -> JwtTokenPairOrm:
     user = await authenticate_user(data.email, data.password)
+    if not user.is_confirmed:
+        raise HTTPException(status_code=401, detail="Account not verified")
     jwt_token_pair = await create_jwt_token_pair(user.id)
     return jwt_token_pair
 

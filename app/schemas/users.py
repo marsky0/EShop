@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import Optional, ClassVar
 
 from app.utils.datetime import current_timestamp
@@ -8,7 +8,7 @@ class UserBase(BaseModel):
     create_timestamp: int
     update_timestamp: int
     username: str
-    email: str
+    email: EmailStr
     password: str
     is_confirmed: bool
     is_admin: bool
@@ -20,7 +20,7 @@ class UserCreate(BaseModel):
     create_timestamp: ClassVar[int] = Field(default_factory=current_timestamp)
     update_timestamp: ClassVar[int] = Field(default_factory=current_timestamp)
     username: str
-    email: str
+    email: EmailStr
     password: str
     is_confirmed: bool = False
     is_admin: bool = False
@@ -28,7 +28,7 @@ class UserCreate(BaseModel):
 class UserUpdate(BaseModel):
     update_timestamp: ClassVar[int] = Field(default_factory=current_timestamp)
     username: Optional[str] = None
-    email: Optional[str] = None
+    email: Optional[EmailStr] = None
     password: Optional[str] = None
     is_confirmed: bool = None
     is_admin: Optional[bool] = None
