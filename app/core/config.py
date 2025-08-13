@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     access_token_expires: int
     refresh_token_expires: int
     postgres_host: str
+    postgres_port: int
     postgres_db: str
     postgres_user: str
     postgres_password: str
@@ -22,11 +23,11 @@ class Settings(BaseSettings):
 
     @property
     def async_database_url(self):
-        return f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}@{self.postgres_host}/{self.postgres_db}"
+        return f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
 
     @property
     def database_url(self):
-        return f"postgresql+psycopg2://{self.postgres_user}:{self.postgres_password}@{self.postgres_host}/{self.postgres_db}"
+        return f"postgresql+psycopg2://{self.postgres_user}:{self.postgres_password}@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
 
 
 settings = Settings()
