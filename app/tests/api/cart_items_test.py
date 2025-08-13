@@ -102,7 +102,7 @@ async def test_cartitem_get_by_user_id():
         "password": "pass123"
     })).json()
 
-    resp = await client.get(f"/api/cart_items/user-id/{user.id}", headers={
+    resp = await client.get(f"/api/cart_items/user_id/{user.id}", headers={
         "Authorization": f"Bearer {token['access_token']}"
     })
     assert resp.status_code == 200

@@ -33,7 +33,7 @@ async def get_cartitem_by_id(id: int, request: Request):
         raise forbidden_exception
     return await service.get_by_id(id)
 
-@router.get("/user-id/{user_id}", response_model=List[CartItemOpt])
+@router.get("/user_id/{user_id}", response_model=List[CartItemOpt])
 @cache(expire=settings.cache_expire_http_responce)
 async def get_cartitem_by_user_id(user_id: int, request: Request):
     user = await authorization_user_by_headers(request.headers)
