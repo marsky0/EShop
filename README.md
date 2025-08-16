@@ -1,4 +1,4 @@
-# EShop - E-commerce Backend
+# EShop - backend of online store
 
 ## 📖 Project Description
 
