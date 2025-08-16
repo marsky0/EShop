@@ -1,217 +1,292 @@
-# 🛒 EShop - Бэкенд интернет-магазина
+# 🛒 EShop - E-commerce Backend
 
-## 📖 Описание проекта
+## 📖 Project Description
 
-EShop - это бэкенд интернет-магазина, построенный на FastAPI и современном стеке технологий. Проект представляет собой REST API для управления товарами, пользователями, корзиной, заказами и комментариями.
+EShop is an e-commerce backend built with FastAPI and modern technology stack. The project provides a REST API for managing products, users, shopping cart, orders, and comments.
 
-## 🚀 Основные возможности
+## 🚀 Key Features
 
-- **Аутентификация и авторизация** - JWT токены, OAuth2, подтверждение email
-- **Управление товарами** - CRUD операции для товаров и категорий
-- **Корзина покупок** - добавление, удаление, пакетные операции
-- **Система заказов** - создание и управление заказами
-- **Комментарии и отзывы** - система комментариев к товарам
-- **Управление пользователями** - регистрация, профили, роли (admin/user)
-- **Кэширование** - Redis для повышения производительности
-- **Rate limiting** - защита от DDoS атак
-- **Email уведомления** - Celery + ProtonMail для подтверждения регистрации
-- **Миграции БД** - Alembic для управления схемой базы данных
+- **Authentication & Authorization** - JWT tokens, OAuth2, email confirmation
+- **Product Management** - CRUD operations for products and categories
+- **Shopping Cart** - add, remove, batch operations
+- **Order System** - create and manage orders
+- **Comments & Reviews** - product comment system
+- **User Management** - registration, profiles, roles (admin/user)
+- **Caching** - Redis for performance improvement
+- **Rate Limiting** - DDoS attack protection
+- **Email Notifications** - Celery + ProtonMail for registration confirmation
+- **Database Migrations** - Alembic for database schema management
 
-## 🛠 Технологический стек
+## 🛠 Technology Stack
 
 ### Backend
-- **FastAPI** - современный веб-фреймворк для Python
-- **SQLAlchemy 2.0** - ORM для работы с базой данных
-- **Alembic** - миграции базы данных
-- **Pydantic** - валидация данных и сериализация
-- **Uvicorn** - ASGI сервер
-- **Python 3.13** - версия Python
+- **FastAPI** - modern Python web framework
+- **SQLAlchemy 2.0** - ORM for database operations
+- **Alembic** - database migrations
+- **Pydantic** - data validation and serialization
+- **Uvicorn** - ASGI server
+- **Python 3.13** - Python version in Docker
 
-### База данных
-- **PostgreSQL** - основная реляционная база данных
-- **Redis** - кэширование
+### Database
+- **PostgreSQL** - main relational database
+- **Redis** - caching
 
-### Аутентификация и безопасность
-- **JWT** - JSON Web Tokens для аутентификации
-- **bcrypt** - хеширование паролей
-- **FastAPI Limiter** - ограничение частоты запросов
+### Authentication & Security
+- **JWT** - JSON Web Tokens for authentication
+- **bcrypt** - password hashing
+- **FastAPI Limiter** - request rate limiting
 
-### Дополнительные сервисы
-- **Celery** - фоновые задачи и очереди сообщений
-- **ProtonMail API** - отправка email уведомлений для подтверждения регистрации
+### Additional Services
+- **Celery** - background tasks and message queues
+- **ProtonMail API** - email notifications for registration confirmation
 
-### Тестирование
-- **pytest** - фреймворк для тестирования
-- **httpx** - HTTP клиент для тестов
+### Testing
+- **pytest** - testing framework
+- **httpx** - HTTP client for tests
 
-## 🔒 Безопасность и производительность
+## 🔒 Security & Performance
 
-### Безопасность
-- **JWT токены** - безопасная аутентификация
-- **bcrypt** - хеширование паролей
-- **Rate limiting** - защита от DDoS атак
-- **CORS** - контроль доступа к API
-- **Роли пользователей** - admin/user разделение прав
+### Security
+- **JWT tokens** - secure authentication
+- **bcrypt** - password hashing
+- **Rate limiting** - DDoS attack protection
+- **CORS** - API access control
+- **User roles** - admin/user permission separation
 
-### Производительность
-- **Redis кэширование** - ускорение HTTP ответов
-- **Асинхронные операции** - FastAPI + async/await
-- **Пакетные операции** - batch CRUD для корзины
-- **Connection pooling** - эффективное управление соединениями БД
+### Performance
+- **Redis caching** - HTTP response acceleration
+- **Asynchronous operations** - FastAPI + async/await
+- **Batch operations** - batch CRUD for cart
+- **Connection pooling** - efficient database connection management
 
-## 📊 Структура базы данных
+## 📊 Database Structure
 
-### Основные таблицы
-- **users** - пользователи системы (admin/user роли, подтверждение email)
-- **products** - товары магазина с категориями
-- **categories** - категории товаров
-- **cart_items** - корзина покупок пользователей
-- **orders** - заказы пользователей
-- **comments** - комментарии к товарам
-- **jwt_token_pairs** - JWT токены для аутентификации
+### Main Tables
+- **users** - system users (admin/user roles, email confirmation)
+- **products** - store products with categories
+- **categories** - product categories
+- **cart_items** - user shopping carts
+- **orders** - user orders
+- **comments** - product comments
+- **jwt_token_pairs** - JWT tokens for authentication
 
-### Связи между таблицами
-- Пользователи могут иметь множество товаров в корзине
-- Заказы связаны с пользователями и товарами
-- Комментарии привязаны к товарам и пользователям
-- Товары принадлежат категориям
+### Table Relationships
+- Users can have multiple products in cart
+- Orders are linked to users and products
+- Comments are tied to products and users
+- Products belong to categories
 
-## 🏗 Архитектура проекта
+## 🏗 Project Architecture
 
 ```
 EShop/
 ├── app/
-│   ├── api/           # API роутеры (FastAPI endpoints)
-│   ├── auth/          # Аутентификация и OAuth
-│   ├── core/          # Конфигурация и настройки
-│   ├── database/      # Подключение к БД и Redis
-│   ├── models/        # SQLAlchemy модели (ORM)
-│   ├── schemas/       # Pydantic схемы для валидации
-│   ├── services/      # Бизнес-логика приложения
-│   ├── tasks/         # Celery задачи (email, etc.)
-│   ├── tests/         # Тесты для API и сервисов
-│   └── utils/         # Вспомогательные утилиты
-├── migrations/         # Alembic миграции БД
-├── docker-compose.yml  # Docker конфигурация
-├── Dockerfile         # Docker образ
-└── main.py            # Точка входа приложения
+│   ├── api/           # API routers (FastAPI endpoints)
+│   ├── auth/          # Authentication and OAuth
+│   ├── core/          # Configuration and settings
+│   ├── database/      # Database and Redis connections
+│   ├── models/        # SQLAlchemy models (ORM)
+│   ├── schemas/       # Pydantic schemas for validation
+│   ├── services/      # Business logic
+│   ├── tasks/         # Celery tasks (email, etc.)
+│   ├── tests/         # API and service tests
+│   └── utils/         # Helper utilities
+├── migrations/         # Alembic database migrations
+├── docker-compose.yml  # Docker configuration
+├── Dockerfile         # Docker image
+└── main.py            # Application entry point
 ```
 
-## 🔧 Как работает система
+## 🔧 How the System Works
 
-### 1. Структура API
-- **`/api/auth`** - аутентификация и регистрация
-- **`/api/products`** - управление товарами
-- **`/api/categories`** - управление категориями
-- **`/api/users`** - управление пользователями
-- **`/api/cart_items`** - корзина покупок
-- **`/api/orders`** - система заказов
-- **`/api/comments`** - комментарии к товарам
+### 1. API Structure
+- **`/api/auth`** - authentication and registration
+- **`/api/products`** - product management
+- **`/api/categories`** - category management
+- **`/api/users`** - user management
+- **`/api/cart_items`** - shopping cart
+- **`/api/orders`** - order system
+- **`/api/comments`** - product comments
 
-### 2. Аутентификация
-- JWT токены (access + refresh)
-- Роли пользователей (admin/user)
-- OAuth2 интеграция
-- Защищенные эндпоинты для администраторов
+### 2. Authentication
+- JWT tokens (access + refresh)
+- User roles (admin/user)
+- OAuth2 integration
+- Protected endpoints for administrators
 
-### 3. Кэширование
-- Redis для HTTP ответов
-- Настраиваемое время жизни кэша
-- Автоматическое обновление при изменениях
+### 3. Caching
+- Redis for HTTP responses
+- Configurable cache lifetime
+- Automatic updates on changes
 
-### 4. Безопасность
-- Rate limiting для защиты от атак
-- Валидация входных данных (Pydantic)
-- Хеширование паролей (bcrypt)
-- CORS настройки
+### 4. Security
+- Rate limiting for attack protection
+- Input validation (Pydantic)
+- Password hashing (bcrypt)
+- CORS settings
 
-## 🚀 Как запустить проект
+## 🚀 How to Run the Project
 
-### Предварительные требования
-- Docker и Docker Compose
+### Prerequisites
+- Docker and Docker Compose
 - Python 3.13+
-- .env файл с настройками
+- .env file with settings
 
-### 1. Клонирование и настройка
+### 1. Clone and Setup
 ```bash
 git clone https://github.com/marsky0/EShop
 cd EShop
 ```
 
-### 2. Настройка .env файла
+### 2. Configure .env file
 ```bash
-# Файл .env уже есть в репозитории
-# Заполните в нем необходимые переменные окружения
+# .env file already exists in repository
+# Fill in the necessary environment variables
 ```
 
-### 3. Запуск через Docker (рекомендуется)
+### 3. Run with Docker (recommended)
 ```bash
-# Запуск всех сервисов в фоне
+# Run all services in background
 docker-compose up -d
 
-# Или запуск с выводом логов в терминале
+# Or run with logs in terminal
 docker-compose up
 
-# Просмотр логов (если запущено в фоне)
+# View logs (if running in background)
 docker-compose logs -f
 
-# Остановка
+# Stop
 docker-compose down
 ```
 
-### 4. Запуск локально
+### 4. Local Development
 ```bash
-# Установка зависимостей
+# Install dependencies
 pip install -r requirements.txt
 
-# Запуск PostgreSQL и Redis (через Docker)
+# Start PostgreSQL and Redis (via Docker)
 docker-compose up -d db redis
-# Или используйте локальные
+# Or use local ones
 
-# Применение миграций
+# Apply migrations
 alembic upgrade head
 
-# Запуск приложения
+# Start application
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
-# Запуск Celery worker (в отдельном терминале)
+# Start Celery worker (in separate terminal)
 celery -A app.tasks worker --loglevel=info
 ```
 
-## 🐳 Docker и развертывание
+## 🐳 Docker and Deployment
 
-### Dockerfile особенности
-- **Python 3.13-slim** - легковесный образ Python
-- **Автоматические миграции** - Alembic запускается при старте контейнера
-- **Celery + Uvicorn** - оба сервиса запускаются в одном контейнере
-- **entrypoint.sh** - скрипт инициализации с миграциями и запуском сервисов
+### Dockerfile Features
+- **Python 3.13-slim** - lightweight Python image
+- **Automatic migrations** - Alembic runs on container start
+- **Celery + Uvicorn** - both services run in one container
+- **entrypoint.sh** - initialization script with migrations and service startup
 
-### Docker Compose сервисы
-- **web** - основное приложение (FastAPI + Celery)
-- **db** - PostgreSQL 15 с персистентным хранилищем
-- **redis** - Redis 7 для кэширования и очередей
+### Docker Compose Services
+- **web** - main application (FastAPI + Celery)
+- **db** - PostgreSQL 15 with persistent storage
+- **redis** - Redis 7 for caching and queues
 
-### Переменные окружения для Docker
+### Environment Variables for Docker
 ```bash
 DATABASE_URL=postgresql://postgres:postgres@db:5432/ESHOP
 REDIS_URL=redis://redis:6379/
 ```
 
-### 5. Проверка работоспособности
+### 5. Check Functionality
 ```bash
-# API доступен по адресу
+# API available at
 http://localhost:8000
 
-# Документация Swagger
+# Swagger documentation
 http://localhost:8000/docs
 
-# Альтернативная документация ReDoc
+# Alternative ReDoc documentation
 http://localhost:8000/redoc
 ```
 
-## 🔒 Переменные окружения
+## 📝 API Endpoints
 
-Создайте файл `.env` со следующими переменными:
+### 🔐 Authentication
+- `POST /api/auth/register` - User registration
+- `GET /api/auth/confirm/{token}` - Registration confirmation
+- `POST /api/auth/login` - User login
+- `POST /api/auth/logout` - User logout
+- `POST /api/auth/refresh` - Token refresh
+
+### 🛍️ Products
+- `GET /api/products/` - List products
+- `GET /api/products/{id}` - Get product by ID
+- `POST /api/products/` - Create product (admin)
+- `PUT /api/products/{id}` - Update product (admin)
+- `DELETE /api/products/{id}` - Delete product (admin)
+
+### 📂 Categories
+- `GET /api/categories/` - List categories
+- `GET /api/categories/{id}` - Get category by ID
+- `POST /api/categories/` - Create category (admin)
+- `PUT /api/categories/{id}` - Update category (admin)
+- `DELETE /api/categories/{id}` - Delete category (admin)
+
+### 🛒 Shopping Cart
+- `GET /api/cart_items/` - View cart (admin)
+- `GET /api/cart_items/{id}` - Get cart item by ID (admin)
+- `GET /api/cart_items/user_id/{user_id}` - User cart
+- `POST /api/cart_items/` - Add product to cart
+- `POST /api/cart_items/batch/` - Batch add products
+- `PUT /api/cart_items/{id}` - Update cart item
+- `PUT /api/cart_items/batch/` - Batch update items
+- `DELETE /api/cart_items/{id}` - Remove product from cart
+- `DELETE /api/cart_items/batch/` - Batch remove products
+
+### 📋 Orders
+- `GET /api/orders/` - List orders
+- `GET /api/orders/{id}` - Order details
+- `POST /api/orders/` - Create order
+- `PUT /api/orders/{id}` - Update order
+- `DELETE /api/orders/{id}` - Delete order
+
+### 👥 Users
+- `GET /api/users/` - List users (admin)
+- `GET /api/users/{id}` - User profile
+- `POST /api/users/` - Create user (admin)
+- `PUT /api/users/{id}` - Update user (admin)
+- `DELETE /api/users/{id}` - Delete user (admin)
+
+### 💬 Comments
+- `GET /api/comments/` - List comments
+- `GET /api/comments/{id}` - Get comment by ID
+- `POST /api/comments/` - Create comment
+- `PUT /api/comments/{id}` - Update comment
+- `DELETE /api/comments/{id}` - Delete comment
+
+## 🚀 Development and Deployment
+
+### Local Development
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Start only DB and Redis
+docker-compose up -d db redis
+
+# Apply migrations
+alembic upgrade head
+
+# Start application with auto-reload
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+# Start Celery worker
+celery -A app.tasks worker --loglevel=info
+```
+
+## 🔒 Environment Variables
+
+Create a `.env` file with the following variables:
 
 ```env
 # Frontend
@@ -242,91 +317,3 @@ CACHE_EXPIRE_HTTP_RESPONSE=300
 EMAIL_USER=your-email@protonmail.com
 EMAIL_PASSWORD=your-email-password
 ```
-
-## 📝 API Endpoints
-
-### 🔐 Аутентификация
-- `POST /api/auth/register` - Регистрация пользователя
-- `GET /api/auth/confirm/{token}` - Подтверждение регистрации
-- `POST /api/auth/login` - Вход в систему
-- `POST /api/auth/logout` - Выход из системы
-- `POST /api/auth/refresh` - Обновление токена
-
-### 🛍️ Товары
-- `GET /api/products/` - Список товаров
-- `GET /api/products/{id}` - Получение товара по ID
-- `POST /api/products/` - Создание товара (admin)
-- `PUT /api/products/{id}` - Обновление товара (admin)
-- `DELETE /api/products/{id}` - Удаление товара (admin)
-
-### 📂 Категории
-- `GET /api/categories/` - Список категорий
-- `GET /api/categories/{id}` - Получение категории по ID
-- `POST /api/categories/` - Создание категории (admin)
-- `PUT /api/categories/{id}` - Обновление категории (admin)
-- `DELETE /api/categories/{id}` - Удаление категории (admin)
-
-### 🛒 Корзина покупок
-- `GET /api/cart_items/` - Просмотр корзины (admin)
-- `GET /api/cart_items/{id}` - Получение элемента корзины по ID (admin)
-- `GET /api/cart_items/user_id/{user_id}` - Корзина пользователя
-- `POST /api/cart_items/` - Добавление товара в корзину
-- `POST /api/cart_items/batch/` - Пакетное добавление товаров
-- `PUT /api/cart_items/{id}` - Обновление элемента корзины
-- `PUT /api/cart_items/batch/` - Пакетное обновление элементов
-- `DELETE /api/cart_items/{id}` - Удаление товара из корзины
-- `DELETE /api/cart_items/batch/` - Пакетное удаление товаров
-
-### 📋 Заказы
-- `GET /api/orders/` - Список заказов
-- `GET /api/orders/{id}` - Детали заказа
-- `POST /api/orders/` - Создание заказа
-- `PUT /api/orders/{id}` - Обновление заказа
-- `DELETE /api/orders/{id}` - Удаление заказа
-
-### 👥 Пользователи
-- `GET /api/users/` - Список пользователей (admin)
-- `GET /api/users/{id}` - Профиль пользователя
-- `POST /api/users/` - Создание пользователя (admin)
-- `PUT /api/users/{id}` - Обновление пользователя (admin)
-- `DELETE /api/users/{id}` - Удаление пользователя (admin)
-
-### 💬 Комментарии
-- `GET /api/comments/` - Список комментариев
-- `GET /api/comments/{id}` - Получение комментария по ID
-- `POST /api/comments/` - Создание комментария
-- `PUT /api/comments/{id}` - Обновление комментария
-- `DELETE /api/comments/{id}` - Удаление комментария
-
-## 🚀 Разработка и развертывание
-
-### Локальная разработка
-```bash
-# Установка зависимостей
-pip install -r requirements.txt
-
-# Запуск только БД и Redis
-docker-compose up -d db redis
-
-# Применение миграций
-alembic upgrade head
-
-# Запуск приложения с автоперезагрузкой
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-
-# Запуск Celery worker
-celery -A app.tasks worker --loglevel=info
-```
-
-### Продакшен развертывание
-```bash
-# Сборка и запуск всех сервисов
-docker-compose up -d --build
-
-# Просмотр логов
-docker-compose logs -f web
-
-# Остановка
-docker-compose down
-```
-
