@@ -47,9 +47,23 @@ app.include_router(users.router)
 
 @app.get("/")
 async def root():
-    return {"message": "hello World!"}
+    return {
+        "message": "Welcome to EShop API!",
+        "description": "E-commerce backend built with FastAPI",
+        "status": "running",
+        "docs": "/docs",
+        "redoc": "/redoc",
+        "endpoints": {
+            "auth": "/api/auth",
+            "products": "/api/products", 
+            "categories": "/api/categories",
+            "users": "/api/users",
+            "cart": "/api/cart_items",
+            "orders": "/api/orders",
+            "comments": "/api/comments"
+        }
+    }
 
 if __name__ == "__main__":
     import uvicorn
-
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
